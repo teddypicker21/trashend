@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TRASHEND — zine style</title>
+  <style>
+    :root{
+      --paper:#f7f4ea;         /* ελαφρύ υπόβαθρο χαρτιού */
+      --ink:#111;              /* "μελάνι" */
+      --accent:#ff5d73;        /* ριζογραφικό ροζ */
+      --accent2:#00a18a;       /* ριζογραφικό teal */
+    }
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:var(--paper);
+      color:var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height:1.2;
+      overflow:hidden; /* σαν poster */
+    }
+
+    /* Κεντρικός καμβάς */
+    .stage{
+      position:relative;
+      height:100%;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr;
+    }
+
+    /* Poster container */
+    .poster{
+      position:relative;
+      overflow:hidden;
+      clip-path: polygon(0% 0%, 100% 0%, 100% 90%, 98% 92%, 100% 94%, 100% 100%, 0% 100%);
+      border: 3px solid var(--ink);
+      margin: 3vmin;
+      transform: rotate(-1.2deg);
+      box-shadow: 8px 8px 0 var(--ink);
+      /* Δώσε σταθερή αναλογία/ύψος ώστε να μην “στενεύει” */
+      aspect-ratio: 16 / 9;
+      min-height: 48vh;
+      background:#fff; /* ώστε να φαίνεται το riso/halftone πριν φορτώσει το video */
+    }
+    .poster video{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      filter: grayscale(100%) contrast(1.25) brightness(1.05);
+      mix-blend-mode:multiply; /* μοιάζει με εκτύπωση */
+      transform: scale(1.03);
+      display:block;
+    }
+
+    /* Halftone/dot screen overlay */
+    .poster::after{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        repeating-radial-gradient(circle at 0 0, rgba(0,0,0,.15) 0 1px, transparent 1px 4px),
+        repeating-radial-gradient(circle at 20px 20px, rgba(0,0,0,.12) 0 1px, transparent 1px 5px);
+      mix-blend-mode:multiply;
+      opacity:.35;
+      pointer-events:none;
+    }
+
+    /* Ριζογραφικό χρώμα (duotone) */
+    .riso{
+      position:absolute; inset:0;
+      background: linear-gradient(120deg, var(--accent) 0%, transparent 40%),
+                  linear-gradient(300deg, transparent 60%, var(--accent2) 100%);
+      mix-blend-mode: screen;
+      opacity:.35;
+      pointer-events:none;
+    }
+
+    /* Τίτλος τύπου cut-n-paste */
+    .title{
+      align-self:start;
+      display:flex; flex-wrap:wrap; gap:10px;
+      padding: 4vmin 2vmin 0; 
+    }
+    .cut{
+      display:inline-block;
+      background:#fff;
+      border:2px solid var(--ink);
+      box-shadow: 4px 4px 0 var(--ink);
+      padding:.35em .5em;
+      font-weight:800; letter-spacing:.02em; text-transform:uppercase;
+      transform: rotate(calc(var(--r,0deg)));
+    }
+
+    /* Στήλη κειμένου σαν zine */
+    .copy{
+      grid-column: 2;
+      align-self:end;
+      margin: 0 3vmin 3vmin 0;
+      border: 2px solid var(--ink);
+      background: #fff;
+      box-shadow: 6px 6px 0 var(--ink);
+      padding: 1.25rem;
+      max-width: 44ch;
+      transform: rotate(0.6deg);
+      position:relative;
+    }
+    .copy h2{margin:0 0 .5rem 0; font-size: clamp(20px, 3.6vmin, 34px)}
+    .copy p{margin:.4rem 0 .6rem}
+
+    /* Ταινίες/κολλητική */
+    .tape{
+      position:absolute; width:110px; height:24px; background:rgba(255,255,0,.7); border:1px dashed #000; transform:rotate(-6deg);
+      top:-12px; left:20px; mix-blend-mode:multiply;
+    }
+
+    /* Προσομοίωση χαρτιού με θόρυβο */
+    .paper-noise{ position:fixed; inset:0; pointer-events:none; mix-blend-mode:multiply; opacity:.15; }
+    .paper-noise svg{ width:100%; height:100%; display:block }
+
+    /* Responsive */
+    @media (max-width: 900px){
+      .stage{ grid-template-columns: 1fr; }
+      .copy{ grid-column: 1; max-width: none; margin: 2vmin; transform: none; }
+      .poster{ height: 55vh; aspect-ratio:auto; } /* σε mobile δώσε συγκεκριμένο ύψος */
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <!-- ΑΡΙΣΤΕΡΑ: τίτλος & poster -->
+    <section>
+      <div class="title">
+        <span class="cut" style="--r:-4deg">TRASH</span>
+        <span class="cut" style="--r:3deg">END</span>
+        <span class="cut" style="--r:-2deg">ZINE</span>
+      </div>
+
+      <div class="poster" aria-label="zine poster">
+        <!-- Βίντεο στη θέση της εικόνας -->
+        <video autoplay loop muted playsinline preload="metadata" poster="/assets/img/poster.jpg">
+          <!-- Προτίμησε μικρό mp4/webm -->
+          <source src="/assets/video/zine-video.webm" type="video/webm">
+          <source src="/assets/video/zine-video.mp4" type="video/mp4">
+          Ο browser σου δεν υποστηρίζει video.
+        </video>
+        <div class="riso"></div>
+      </div>
+    </section>
+
+    <!-- ΔΕΞΙΑ: κείμενο σαν zine σημειώσεις -->
+    <aside class="copy">
+      <div class="tape"></div>
+      <h2>Issue #01 — Fall</h2>
+      <p>Πειραματικό landing σε αισθητική <em>zine</em>: halftone, cut-n-paste τίτλοι, ριζογραφικά layers, χαρτί με κόκκο.</p>
+      <p>Ανέβασε το βίντεό σου στο <code>/assets/video/</code> και προσαρμόσε το <code>src</code> επάνω.</p>
+      <p><a href="/blog/">→ Blog</a> &nbsp; <a href="mailto:hello@trashend.xyz">hello@trashend.xyz</a></p>
+    </aside>
+  </main>
+
+  <!-- Επίστρωση χαρτιού με θόρυβο μέσω SVG (καθαρά CSS/SVG, χωρίς εξωτερικά αρχεία) -->
+  <div class="paper-noise" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg">
+      <filter id="noiseFilter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+        <feColorMatrix type="saturate" values="0"/>
+        <feComponentTransfer>
+          <feFuncA type="table" tableValues="0 0.4"/>
+        </feComponentTransfer>
+      </filter>
+      <rect width="100%" height="100%" filter="url(#noiseFilter)" />
+    </svg>
+  </div>
+</body>
+</html>
