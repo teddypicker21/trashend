@@ -4,58 +4,93 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Trashend CMS</title>
+
+    <!-- Netlify Identity (απαραίτητο για Git Gateway login) -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+    <!-- Decap CMS -->
+    <script>window.CMS_MANUAL_INIT = true;</script>
+    <script src="https://cdn.jsdelivr.net/npm/decap-cms@3/dist/decap-cms.js"></script>
+
+    <style>
+      body{font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial}
+      #boot{padding:24px}
+      .error{color:#b00020}
+    </style>
+  </head>
+  <body>
+    <div id="boot">Φορτώνει το CMS… αν μείνει άσπρο, άνοιξε το Console (F12) για σφάλματα.</div>
+
     <script>
-      // Θα κάνουμε manual init μετά το script του CMS
-      window.CMS_MANUAL_INIT = true;
-    </script>
-    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-    <script>
-      // ΕΝΣΩΜΑΤΩΜΕΝΟ CONFIG – δεν χρειάζεται config.yml
-      CMS.init({
-        config: {
-          backend: { name: "git-gateway", branch: "main" },
-          media_folder: "assets/uploads",
-          public_folder: "/assets/uploads",
-          locale: "el",
-          collections: [
-            {
-              name: "posts",
-              label: "Άρθρα (HTML)",
-              folder: "blog",
-              create: true,
-              slug: "{{slug}}",
-              extension: "html",
-              format: "frontmatter",
-              frontmatter_delimiter: ["<!--", "-->"],
-              editor: { preview: false },
-              fields: [
-                { label: "Τίτλος", name: "title", widget: "string" },
-                { label: "Ημερομηνία", name: "date", widget: "datetime" },
-                { label: "Περιεχόμενο (HTML)", name: "body", widget: "text" }
-              ]
-            },
-            {
-              name: "pages",
-              label: "Σελίδες",
-              files: [
+      // Μικρό helper για να εμφανίζουμε μηνύματα αντί για λευκή σελίδα
+      function showError(msg){
+        const el = document.getElementById('boot');
+        el.className = 'error';
+        el.textContent = msg;
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        try {
+          if (!window.CMS) {
+            showError('Απέτυχε να φορτώσει το Decap CMS (script). Δοκίμασε hard refresh ή απενεργοποίησε adblock.');
+            return;
+          }
+
+          // INLINE CONFIG — δεν χρειάζεται config.yml
+          CMS.init({
+            config: {
+              backend: { name: 'git-gateway', branch: 'main' },
+              media_folder: 'assets/uploads',
+              public_folder: '/assets/uploads',
+              locale: 'el',
+              collections: [
                 {
-                  name: "blogindex",
-                  label: "Blog index",
-                  file: "blog/index.html",
-                  format: "frontmatter",
-                  frontmatter_delimiter: ["<!--", "-->"],
+                  name: 'posts',
+                  label: 'Άρθρα (HTML)',
+                  folder: 'blog',
+                  create: true,
+                  slug: '{{slug}}',
+                  extension: 'html',
+                  format: 'frontmatter',
+                  frontmatter_delimiter: ['<!--','-->'],
+                  editor: { preview: false },
                   fields: [
-                    { label: "Τίτλος", name: "title", widget: "string", default: "Blog" },
-                    { label: "Περιεχόμενο (HTML)", name: "body", widget: "text",
-                      default: "<h1>Blog</h1>\\n<ul>\\n  <li><a href=\\\"/blog/first-post.html\\\">Πρώτο άρθρο</a></li>\\n</ul>" }
+                    { label:'Τίτλος', name:'title', widget:'string' },
+                    { label:'Ημερομηνία', name:'date', widget:'datetime' },
+                    { label:'Περιεχόμενο (HTML)', name:'body', widget:'text' }
+                  ]
+                },
+                {
+                  name: 'pages',
+                  label: 'Σελίδες',
+                  files: [
+                    {
+                      name: 'blogindex',
+                      label: 'Blog index',
+                      file: 'blog/index.html',
+                      format: 'frontmatter',
+                      frontmatter_delimiter: ['<!--','-->'],
+                      fields: [
+                        { label:'Τίτλος', name:'title', widget:'string', default:'Blog' },
+                        { label:'Περιεχόμενο (HTML)', name:'body', widget:'text',
+                          default:'<h1>Blog</h1>\\n<ul>\\n  <li><a href=\"/blog/first-post.html\">Πρώτο άρθρο</a></li>\\n</ul>' }
+                      ]
+                    }
                   ]
                 }
               ]
             }
-          ]
+          });
+
+          // αν φτάσαμε εδώ, αφαιρούμε το loading μήνυμα
+          const boot = document.getElementById('boot');
+          if (boot) boot.remove();
+
+        } catch (e) {
+          console.error(e);
+          showError('Σφάλμα κατά την εκκίνηση του CMS: ' + (e && e.message ? e.message : e));
         }
       });
     </script>
-  </head>
-  <body></body>
+  </body>
 </html>
