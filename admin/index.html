@@ -1,16 +1,61 @@
 <!doctype html>
 <html lang="el">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Trashend CMS</title>
-    <!-- Decap CMS (Netlify CMS) -->
+    <script>
+      // Θα κάνουμε manual init μετά το script του CMS
+      window.CMS_MANUAL_INIT = true;
+    </script>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-    <style>
-      body{ font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
-    </style>
+    <script>
+      // ΕΝΣΩΜΑΤΩΜΕΝΟ CONFIG – δεν χρειάζεται config.yml
+      CMS.init({
+        config: {
+          backend: { name: "git-gateway", branch: "main" },
+          media_folder: "assets/uploads",
+          public_folder: "/assets/uploads",
+          locale: "el",
+          collections: [
+            {
+              name: "posts",
+              label: "Άρθρα (HTML)",
+              folder: "blog",
+              create: true,
+              slug: "{{slug}}",
+              extension: "html",
+              format: "frontmatter",
+              frontmatter_delimiter: ["<!--", "-->"],
+              editor: { preview: false },
+              fields: [
+                { label: "Τίτλος", name: "title", widget: "string" },
+                { label: "Ημερομηνία", name: "date", widget: "datetime" },
+                { label: "Περιεχόμενο (HTML)", name: "body", widget: "text" }
+              ]
+            },
+            {
+              name: "pages",
+              label: "Σελίδες",
+              files: [
+                {
+                  name: "blogindex",
+                  label: "Blog index",
+                  file: "blog/index.html",
+                  format: "frontmatter",
+                  frontmatter_delimiter: ["<!--", "-->"],
+                  fields: [
+                    { label: "Τίτλος", name: "title", widget: "string", default: "Blog" },
+                    { label: "Περιεχόμενο (HTML)", name: "body", widget: "text",
+                      default: "<h1>Blog</h1>\\n<ul>\\n  <li><a href=\\\"/blog/first-post.html\\\">Πρώτο άρθρο</a></li>\\n</ul>" }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      });
+    </script>
   </head>
-  <body>
-    <!-- Το CMS θα φορτώσει μόνο του -->
-  </body>
+  <body></body>
 </html>
