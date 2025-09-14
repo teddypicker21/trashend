@@ -2,41 +2,20 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: "assets/uploads"   # πού θα αποθηκεύονται τα media στο repo
-public_folder: "/assets/uploads" # πώς θα τα “βλέπει” ο browser
-
-# Γλώσσα UI (προαιρετικά)
-locale: "el"
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
 
 collections:
-  # 1) Blog posts ως ΚΑΘΑΡΑ HTML αρχεία στο /blog/
   - name: "posts"
     label: "Άρθρα (HTML)"
     folder: "blog"
     create: true
-    slug: "{{slug}}"          # /blog/το-ονομα.html
+    slug: "{{slug}}"
     extension: "html"
     format: "frontmatter"
-    frontmatter_delimiter: ["<!--", "-->"]  # ώστε τα metadata να μπαίνουν ως HTML comments και να μη φαίνονται στη σελίδα
-    editor:
-      preview: false          # βλέπεις απευθείας το textarea
+    frontmatter_delimiter: ["<!--", "-->"]
+    editor: { preview: false }
     fields:
       - { label: "Τίτλος", name: "title", widget: "string" }
       - { label: "Ημερομηνία", name: "date", widget: "datetime" }
-      - { label: "Περιεχόμενο (HTML)", name: "body", widget: "text", hint: "Γράψε/επικόλλησε HTML (π.χ. <h1>...</h1><p>...</p>)" }
-
-  # 2) Η σελίδα λίστας /blog/index.html, για να προσθέτεις links στα άρθρα χειροκίνητα
-  - name: "pages"
-    label: "Σελίδες"
-    files:
-      - name: "blogindex"
-        label: "Blog index"
-        file: "blog/index.html"
-        format: "frontmatter"
-        frontmatter_delimiter: ["<!--", "-->"]
-        fields:
-          - { label: "Τίτλος", name: "title", widget: "string", default: "Blog" }
-          - label: "Περιεχόμενο (HTML)"
-            name: "body"
-            widget: "text"
-            default: "<h1>Blog</h1>\n<ul>\n  <li><a href=\"/blog/first-post.html\">Πρώτο άρθρο</a></li>\n</ul>"
+      - { label: "Περιεχόμενο (HTML)", name: "body", widget: "text" }
